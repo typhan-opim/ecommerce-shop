@@ -171,7 +171,7 @@ const Cart = () => {
                 return (
                   <div
                     key={product?._id + "Add To Cart Loading"}
-                    className="w-full bg-white h-32 my-2 border border-slate-300  rounded grid grid-cols-[128px,1fr]"
+                    className="w-full bg-white h-32 my-2 border border-slate-300  rounded flex gap-4 items-center"
                   >
                     <div className="w-32 h-32 bg-slate-200">
                       <img
@@ -179,7 +179,7 @@ const Cart = () => {
                         className="w-full h-full object-scale-down mix-blend-multiply"
                       />
                     </div>
-                    <div className="px-4 py-2 relative">
+                    <div className="px-4 py-2 relative w-full">
                       {/**delete product */}
                       <div
                         className="absolute right-0 text-red-600 rounded-full p-2 hover:bg-orange-600 hover:text-white cursor-pointer"
@@ -194,15 +194,15 @@ const Cart = () => {
                       <p className="capitalize text-slate-500">
                         {product?.productId?.category}
                       </p>
-                      <div className="flex items-center justify-between">
+                      <div className="flex gap-2 items-center justify-between">
                         <p className="text-red-600 font-medium text-lg">
                           {displayUSDCurrency(
                             product?.productId?.sellingPrice || 0
                           )}
                         </p>
-                        <p className="text-slate-600 font-semibold text-lg">
+                        <p className="text-slate-600 font-semibold text-lg line-through">
                           {displayUSDCurrency(
-                            (product?.productId?.sellingPrice || 0) *
+                            (product?.productId?.price || 0) *
                               (product?.quantity || 0)
                           )}
                         </p>
