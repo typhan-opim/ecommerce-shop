@@ -1,17 +1,16 @@
-import { useContext, useRef, useState } from "react";
 import useClickOutside from "@/helpers/useClickOutside";
+import { useContext, useRef, useState } from "react";
 // import { FaShoppingCart } from "react-icons/fa";
+import ROLE from "@/common/role";
+import Context from "@/context";
+import { useLogoutUser } from "@/hooks/useLogoutUser";
+import type { RootState } from "@/store/store";
+import { setUserDetails } from "@/store/userSlice";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { GrSearch } from "react-icons/gr";
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SummaryApi from "@/common";
-import ROLE from "@/common/role";
-import Context from "@/context";
-import { setUserDetails } from "@/store/userSlice";
-import { useLogoutUser } from "@/hooks/useLogoutUser";
 
 const Header = () => {
   type User = {
