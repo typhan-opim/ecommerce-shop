@@ -11,7 +11,7 @@ const AllProducts = () => {
     const response = await fetch(SummaryApi.allProduct.url);
     const dataResponse = await response.json();
 
-    console.log("product data", dataResponse);
+    // console.log("product data", dataResponse);
 
     setAllProduct(dataResponse?.data || []);
   };
@@ -23,31 +23,33 @@ const AllProducts = () => {
   }, []);
 
   return (
-    <div>
-      <div className="bg-white py-2 px-4 flex justify-between items-center">
-        <h2 className="font-bold text-lg">All Product</h2>
+    <div className="container mx-auto py-4 px-2 md:px-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-linear-to-r from-orange-50 to-red-100 rounded-2xl shadow p-6 mb-6">
+        <h2 className="font-bold text-2xl text-red-700 tracking-tight flex items-center gap-2">
+          <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/></svg>
+          All Products
+        </h2>
         <button
-          className="border-2 border-red-600 text-red-600 hover:bg-orange-600 hover:text-white transition-all py-1 px-3 rounded-full "
+          className="flex items-center gap-2 border-2 border-red-500 text-red-600 font-semibold hover:bg-red-500 hover:text-white transition-all py-2 px-6 rounded-full shadow-md mt-4 sm:mt-0"
           onClick={() => setOpenUploadProduct(true)}
         >
+          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-upload"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Upload Product
         </button>
       </div>
 
-      {/**all product */}
-      <div className="flex items-center flex-wrap gap-5 py-4 h-[calc(100vh-190px)] overflow-y-scroll">
-        {allProduct.map((product, index) => {
-          return (
-            <AdminProductCard
-              data={product}
-              key={index + "allProduct"}
-              fetchdata={fetchAllProduct}
-            />
-          );
-        })}
+      {/* all product */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4 py-4">
+        {allProduct.map((product, index) => (
+          <AdminProductCard
+            data={product}
+            key={index + "allProduct"}
+            fetchdata={fetchAllProduct}
+          />
+        ))}
       </div>
 
-      {/**upload prouct component */}
+      {/* upload product component */}
       {openUploadProduct && (
         <UploadProduct
           onClose={() => setOpenUploadProduct(false)}

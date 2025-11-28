@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 const Success = () => {
   return (
-    <div className='bg-slate-200 w-full max-w-md mx-auto flex justify-center items-center flex-col p-4 m-2 rounded'>
+    <div className='bg-slate-200 w-full max-w-md mx-auto flex justify-center items-center flex-col p-4 my-10 rounded'>
       <img
         src={"./assets/success.gif"}
         width={150}

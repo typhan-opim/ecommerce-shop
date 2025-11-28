@@ -1,90 +1,113 @@
-import { useState } from 'react';
+import { useState } from "react";
+import Select from "react-select";
 import { IoMdClose } from "react-icons/io";
-import { toast } from 'react-toastify';
-import SummaryApi from '../common';
-import ROLE from '../common/role';
-
+import { toast } from "react-toastify";
+import SummaryApi from "../common";
+import ROLE from "../common/role";
 
 interface ChangeUserRoleProps {
-    name: string;
-    email: string;
-    role: string;
-    userId: string;
-    onClose: () => void;
-    callFunc: () => void;
+  name: string;
+  email: string;
+  role: string;
+  userId: string;
+  onClose: () => void;
+  callFunc: () => void;
 }
 
 const ChangeUserRole = ({
-    name,
-    email,
-    role,
-    userId,
-    onClose,
-    callFunc,
+  name,
+  email,
+  role,
+  userId,
+  onClose,
+  callFunc,
 }: ChangeUserRoleProps) => {
-    const [userRole, setUserRole] = useState(role);
+  const [userRole, setUserRole] = useState(role);
 
-    const handleOnChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setUserRole(e.target.value);
-        console.log(e.target.value);
-    };
+  const roleOptions = Object.values(ROLE).map((el) => ({ value: el, label: el.charAt(0).toUpperCase() + el.slice(1) }));
 
-    const updateUserRole = async() =>{
-        const fetchResponse = await fetch(SummaryApi.updateUser.url,{
-            method : SummaryApi.updateUser.method,
-            credentials : 'include',
-            headers : {
-                "content-type" : "application/json"
-            },
-            body : JSON.stringify({
-                userId : userId,
-                role : userRole
-            })
-        })
+  const handleOnChangeSelect = (option: { value: string; label: string } | null) => {
+    if (option) setUserRole(option.value);
+  };
 
-        const responseData = await fetchResponse.json()
+  const updateUserRole = async () => {
+    const fetchResponse = await fetch(SummaryApi.updateUser.url, {
+      method: SummaryApi.updateUser.method,
+      credentials: "include",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        role: userRole,
+      }),
+    });
 
-        if(responseData.success){
-            toast.success(responseData.message)
-            onClose()
-            callFunc()
-        }
+    const responseData = await fetchResponse.json();
 
-        console.log("role updated",responseData)
-
+    if (responseData.success) {
+      toast.success(responseData.message);
+      onClose();
+      callFunc();
     }
 
+    console.log("role updated", responseData);
+  };
+
   return (
-    <div className='fixed top-0 bottom-0 left-0 right-0 w-full h-full z-10 flex justify-between items-center bg-slate-200 bg-opacity-50'>
-       <div className='mx-auto bg-white shadow-md p-4 w-full max-w-sm'>
-
-            <button className='block ml-auto' onClick={onClose}>
-                <IoMdClose/>
-            </button>
-
-            <h1 className='pb-4 text-lg font-medium'>Change User Role</h1>
-
-             <p>Name : {name}</p>   
-             <p>Email : {email}</p> 
-
-            <div className='flex items-center justify-between my-4'>
-                <p>Role :</p>  
-                <select className='border px-4 py-1' value={userRole} onChange={handleOnChangeSelect}>
-                    {
-                        Object.values(ROLE).map(el => {
-                            return(
-                                <option value={el} key={el}>{el}</option>
-                            )
-                        })
-                    }
-                </select>
-            </div>
-
-
-            <button className='w-fit mx-auto block  py-1 px-3 rounded-full bg-orange-600 text-white hover:bg-orange-700' onClick={updateUserRole}>Change Role</button>
-       </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div className="relative mx-auto bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md animate-fadeIn">
+        <button
+          className="absolute top-3 right-3 text-slate-400 hover:text-orange-600 text-2xl p-1 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <IoMdClose />
+        </button>
+        <h1 className="pb-4 text-2xl font-bold text-slate-800 text-center tracking-wide">
+          Change User Role
+        </h1>
+        <div className="grid md:grid-cols-2">
+          <div>
+            <span className="block text-slate-500 text-sm font-medium">
+              Name
+            </span>
+            <span className="block text-base font-semibold text-slate-700">
+              {name}
+            </span>
+          </div>
+          <div>
+            <span className="block text-slate-500 text-sm font-medium">
+              Email
+            </span>
+            <span className="block text-base font-semibold text-slate-700">
+              {email}
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 my-3">
+          <label className="text-slate-600 font-medium mb-1">Role</label>
+          <Select
+            classNamePrefix="react-select"
+            options={roleOptions}
+            value={roleOptions.find((opt) => opt.value === userRole)}
+            onChange={handleOnChangeSelect}
+            isSearchable={false}
+            styles={{
+              control: (base) => ({ ...base, borderRadius: '0.5rem', borderColor: '#f59e42', minHeight: '44px' }),
+              option: (base, state) => ({ ...base, color: state.isSelected ? '#fff' : '#1e293b', backgroundColor: state.isSelected ? '#f59e42' : state.isFocused ? '#fef3c7' : '#fff', fontWeight: 500 }),
+            }}
+          />
+        </div>
+        <button
+          className="w-full mt-6 py-2 rounded-full bg-orange-600 text-white text-lg font-semibold shadow hover:bg-orange-700 transition"
+          onClick={updateUserRole}
+        >
+          Change Role
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChangeUserRole
+export default ChangeUserRole;

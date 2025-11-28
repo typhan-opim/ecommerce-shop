@@ -33,96 +33,142 @@ type Order = {
 const AllOrder = () => {
   const [data, setData] = useState<Order[]>([]);
 
-  const fetchOrderDetails = async () => {
+  const fetchOrderDetails = async (): Promise<void> => {
     const response = await fetch(SummaryApi.allOrder.url, {
       method: SummaryApi.allOrder.method,
       credentials: "include",
     });
 
-    const responseData = await response.json();
+    type ApiResponse = { data?: Order[] };
+    const responseData: ApiResponse = await response.json();
 
-    setData(responseData.data);
-    console.log("order list", responseData);
+    setData(Array.isArray(responseData.data) ? responseData.data : []);
+    // console.log("order list", responseData);
   };
 
   useEffect(() => {
-    fetchOrderDetails();
+    (async () => {
+      await fetchOrderDetails();
+    })();
   }, []);
 
   return (
-    <div className="h-[calc(100vh-190px)] overflow-y-scroll">
-      {!data[0] && <p>No Order available</p>}
-
-      <div className="p-4 w-full">
-        {data.map((item, index) => {
-          return (
-            <div key={item.userId + index}>
-              <p className="font-medium text-lg">
-                {moment(item.createdAt).format("LL")}
-              </p>
-              <div className="border rounded p-2">
-                <div className="flex flex-col lg:flex-row justify-between">
-                  <div className="grid gap-1">
-                    {item.productDetails.map((product, idx) => {
-                      return (
-                        <div
-                          key={product.productId + idx}
-                          className="flex  gap-3 bg-slate-100"
-                        >
-                          <img
-                            src={product.image[0]}
-                            className="w-28 h-28 bg-slate-200 object-scale-down p-2"
-                          />
-                          <div>
-                            <div className="font-medium text-lg text-ellipsis line-clamp-1">
-                              {product.name}
-                            </div>
-                            <div className="flex items-center gap-5 mt-1">
-                              <div className="text-lg text-red-500">
-                                {displayUSDCurrency(product.price)}
-                              </div>
-                              <p>Quantity : {product.quantity}</p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="flex flex-col gap-4 p-2 min-w-[300px]">
-                    <div>
-                      <div className="text-lg font-medium">
-                        Payment Details :{" "}
+    <div className="container mx-auto py-8 px-2 md:px-8">
+      {!data[0] && (
+        <div className="text-center text-slate-400 py-12 text-lg">
+          No Order available
+        </div>
+      )}
+      <div className="grid gap-3 md:gap-4">
+        {data.map((item, index) => (
+          <div
+            key={item.userId + index}
+            className="bg-white rounded-2xl shadow-lg p-6 border border-slate-100 hover:shadow-2xl transition-shadow duration-200"
+          >
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+              <div className="flex items-center gap-3">
+                <span className="text-blue-700 font-bold text-lg">
+                  {moment(item.createdAt).format("LL")}
+                </span>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ml-2 ${
+                    item.paymentDetails.payment_status === "paid"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {item.paymentDetails.payment_status === "paid"
+                    ? "Paid"
+                    : item.paymentDetails.payment_status}
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-slate-500 text-sm">Order ID:</span>
+                <span className="ml-2 font-mono text-slate-700 text-xs">
+                  {item.userId.slice(-8)}
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Product List */}
+              <div className="flex-1 grid gap-3">
+                {item.productDetails.map((product, idx) => (
+                  <div
+                    key={product.productId + idx}
+                    className="flex gap-4 bg-slate-50 rounded-xl p-3 hover:bg-blue-50 transition"
+                  >
+                    <img
+                      src={product.image[0]}
+                      className="w-20 h-20 rounded-lg bg-slate-200 object-contain p-2 border border-slate-300"
+                      alt={product.name}
+                    />
+                    <div className="flex flex-col">
+                      <div className="font-semibold text-base text-ellipsis line-clamp-1">
+                        {product.name}
                       </div>
-                      <p className=" ml-1">
-                        Payment method :{" "}
+                      <div className="flex items-center gap-4 mt-1">
+                        <span className="text-lg text-blue-600 font-bold">
+                          {displayUSDCurrency(product.price)}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          x{product.quantity}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Payment & Shipping */}
+              <div className="flex flex-col gap-4 p-2 min-w-[260px]">
+                <div>
+                  <div className="text-base font-semibold mb-1 text-slate-700">
+                    Payment
+                  </div>
+                  <div className="ml-1 text-sm">
+                    <div>
+                      Method:{" "}
+                      <span className="font-medium text-slate-600">
                         {item.paymentDetails.payment_method_type[0]}
-                      </p>
-                      <p className=" ml-1">
-                        Payment Status : {item.paymentDetails.payment_status}
-                      </p>
+                      </span>
                     </div>
                     <div>
-                      <div className="text-lg font-medium">
-                        Shipping Details :
-                      </div>
-                      {item.shipping_options.map((shipping) => {
-                        return (
-                          <div key={shipping.shipping_rate} className=" ml-1">
-                            Shipping Amount : {shipping.shipping_amount}
-                          </div>
-                        );
-                      })}
+                      Status:{" "}
+                      <span
+                        className={`font-semibold ${
+                          item.paymentDetails.payment_status === "paid"
+                            ? "text-green-600"
+                            : "text-yellow-600"
+                        }`}
+                      >
+                        {item.paymentDetails.payment_status}
+                      </span>
                     </div>
                   </div>
                 </div>
-
-                <div className="font-semibold ml-auto w-fit lg:text-lg">
-                  Total Amount : {item.totalAmount}
+                <div>
+                  <div className="text-base font-semibold mb-1 text-slate-700">
+                    Shipping
+                  </div>
+                  <div className="ml-1 text-sm">
+                    {item.shipping_options.map((shipping) => (
+                      <div key={shipping.shipping_rate}>
+                        Shipping Amount:{" "}
+                        <span className="font-medium">
+                          {displayUSDCurrency(shipping.shipping_amount)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          );
-        })}
+            <div className="flex justify-end mt-4">
+              <div className="font-bold text-xl text-blue-700 bg-blue-50 px-6 py-2 rounded-full shadow">
+                Total: {displayUSDCurrency(item.totalAmount)}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

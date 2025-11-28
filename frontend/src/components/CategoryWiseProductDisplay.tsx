@@ -55,7 +55,7 @@ const CategroyWiseProductDisplay = ({ category, heading }: CategoryWiseProductDi
     <div className="container mx-auto px-4 my-6 relative">
       <h2 className="text-2xl font-semibold py-4">{heading}</h2>
 
-      <div className="grid grid-cols-3 xl:grid-cols-4 justify-between gap-4 xl:gap-6 overflow-x-auto scrollbar-none transition-all">
+      <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-3 md:gap-4 transition-all">
         {loading
           ? loadingList.map((_, idx) => (
               <div className="w-full bg-white rounded-sm shadow " key={"loading-" + idx}>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import Select from "react-select";
 import { useLocation, useNavigate } from "react-router-dom";
 import SummaryApi from "../common";
 import VerticalCard from "../components/VerticalCard";
@@ -30,20 +31,42 @@ const CategoryProduct = () => {
   const [selectCategory, setSelectCategory] = useState<CategoryMap>(
     urlCategoryListObject
   );
+  // react-select multi value for Category
+  const categoryOptions = productCategory.map((cat) => ({ value: cat.value, label: cat.label }));
+  const [sortBy, setSortBy] = useState("asc");
+  const selectedCategoryOptions = categoryOptions.filter(opt => selectCategory[opt.value]);
+
+  // Price range filter
+  const priceRangeOptions = [
+    { value: "all", label: "All Prices" },
+    { value: "0-50", label: "$0 - $50" },
+    { value: "50-100", label: "$50 - $100" },
+    { value: "100-200", label: "$100 - $200" },
+    { value: "200-500", label: "$200 - $500" },
+    { value: "500-1000", label: "$500 - $1000" },
+    { value: "1000+", label: "$1000+" },
+  ];
+  const [selectedPriceRange, setSelectedPriceRange] = useState(priceRangeOptions[0]);
+
+  // react-select single value for Sort by
+  const sortOptions = [
+    { value: "asc", label: "Price - Low to High" },
+    { value: "dsc", label: "Price - High to Low" },
+  ];
+  const selectedSortOption = sortOptions.find(opt => opt.value === sortBy) || null;
   const filterCategoryList = useMemo(() => {
     return Object.keys(selectCategory).filter(
       (categoryKeyName) => selectCategory[categoryKeyName]
     );
   }, [selectCategory]);
-  const [sortBy, setSortBy] = useState("");
   const [loading] = useState(false); // loading is not used, but kept for prop compatibility
 
-  const handleSelectCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    setSelectCategory((preve) => ({
-      ...preve,
-      [value]: checked,
-    }));
+  const handleSelectCategory = (selected: any) => {
+    const newCategory: CategoryMap = {};
+    (selected || []).forEach((cat: { value: string }) => {
+      newCategory[cat.value] = true;
+    });
+    setSelectCategory(newCategory);
   };
 
   useEffect(() => {
@@ -58,9 +81,22 @@ const CategoryProduct = () => {
         }),
       });
       const dataResponse = await response.json();
-      setData(dataResponse?.data || []);
+      let products = dataResponse?.data || [];
+      // Filter by price range if not 'all'
+      if (selectedPriceRange.value !== "all") {
+        products = products.filter((product: Product) => {
+          const price = product.sellingPrice;
+          if (selectedPriceRange.value === "1000+") return price >= 1000;
+          const [min, max] = selectedPriceRange.value.split("-").map(Number);
+          return price >= min && price <= max;
+        });
+      }
+      setData(products);
     })();
-  }, [filterCategoryList]);
+  }, [filterCategoryList, selectedPriceRange]);
+  const handlePriceRangeChange = (selected: any) => {
+    setSelectedPriceRange(selected || priceRangeOptions[0]);
+  };
 
   useEffect(() => {
     const urlFormat = filterCategoryList.map((el, index) => {
@@ -72,8 +108,8 @@ const CategoryProduct = () => {
     navigate("/product-category?" + urlFormat.join(""));
   }, [filterCategoryList, navigate]);
 
-  const handleOnChangeSortBy = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  const handleOnChangeSortBy = (selected: any) => {
+    const value = selected ? selected.value : "";
     setSortBy(value);
     if (value === "asc") {
       setData((preve) =>
@@ -90,80 +126,60 @@ const CategoryProduct = () => {
   // useEffect for sortBy is not needed as sorting is handled in handleOnChangeSortBy
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto px-4">
       {/***desktop version */}
-      <div className="hidden lg:grid grid-cols-[200px,1fr]">
+      <div className="flex flex-col md:pt-8 pt-5">
         {/***left side */}
-        <div className="bg-white p-2 min-h-[calc(100vh-120px)] overflow-y-scroll">
-          {/**sort by */}
-          <div className="">
-            <h3 className="text-base uppercase font-medium text-slate-500 border-b pb-1 border-slate-300">
-              Sort by
-            </h3>
-
-            <form className="text-sm flex flex-col gap-2 py-2">
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="sortBy"
-                  checked={sortBy === "asc"}
-                  onChange={handleOnChangeSortBy}
-                  value={"asc"}
-                />
-                <label>Price - Low to High</label>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="radio"
-                  name="sortBy"
-                  checked={sortBy === "dsc"}
-                  onChange={handleOnChangeSortBy}
-                  value={"dsc"}
-                />
-                <label>Price - High to Low</label>
-              </div>
-            </form>
+        <div className="bg-white grid lg:grid-cols-3 gap-4 p-4 rounded-xl shadow-md">
+          {/* Sort by */}
+          <div>
+            <h3 className="text-base uppercase font-medium text-slate-500 border-b pb-1 border-slate-300">Sort by</h3>
+            <div className="text-sm flex flex-col gap-2 py-2">
+              <Select
+                options={sortOptions}
+                value={selectedSortOption}
+                onChange={handleOnChangeSortBy}
+                isClearable
+                placeholder="Select sort order"
+              />
+            </div>
           </div>
-
-          {/**filter by */}
-          <div className="">
-            <h3 className="text-base uppercase font-medium text-slate-500 border-b pb-1 border-slate-300">
-              Category
-            </h3>
-
-            <form className="text-sm flex flex-col gap-2 py-2">
-              {productCategory.map((categoryName) => {
-                return (
-                  <div
-                    className="flex items-center gap-3"
-                    key={categoryName.value}
-                  >
-                    <input
-                      type="checkbox"
-                      name={"category"}
-                      checked={!!selectCategory[categoryName.value]}
-                      value={categoryName.value}
-                      id={categoryName.value}
-                      onChange={handleSelectCategory}
-                    />
-                    <label htmlFor={categoryName.value}>
-                      {categoryName.label}
-                    </label>
-                  </div>
-                );
-              })}
-            </form>
+          {/* Price range */}
+          <div>
+            <h3 className="text-base uppercase font-medium text-slate-500 border-b pb-1 border-slate-300">Price Range</h3>
+            <div className="text-sm flex flex-col gap-2 py-2">
+              <Select
+                options={priceRangeOptions}
+                value={selectedPriceRange}
+                onChange={handlePriceRangeChange}
+                isSearchable={false}
+                placeholder="Select price range"
+              />
+            </div>
+          </div>
+          {/* Category */}
+          <div>
+            <h3 className="text-base uppercase font-medium text-slate-500 border-b pb-1 border-slate-300">Category</h3>
+            <div className="text-sm flex flex-col gap-2 py-2">
+              <Select
+                options={categoryOptions}
+                value={selectedCategoryOptions}
+                onChange={handleSelectCategory}
+                isMulti
+                placeholder="Select categories"
+                closeMenuOnSelect={false}
+              />
+            </div>
           </div>
         </div>
 
         {/***right side ( product ) */}
-        <div className="px-4">
+        <div>
           <p className="font-medium text-slate-800 text-lg my-2">
             Search Results : {data.length}
           </p>
 
-          <div className="min-h-[calc(100vh-120px)] overflow-y-scroll max-h-[calc(100vh-120px)]">
+          <div className="py-6">
             {data.length !== 0 && !loading && (
               <VerticalCard data={data} loading={loading} />
             )}

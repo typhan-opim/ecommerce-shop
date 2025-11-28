@@ -65,113 +65,119 @@ const SignUp = () => {
   return (
     <section id="signup">
       <div className="mx-auto container p-4">
-        <div className="bg-white p-5 w-full max-w-sm mx-auto">
-          <div className="w-20 h-20 mx-auto relative overflow-hidden rounded-full">
-            <div>
-              <img
-                src={data.profilePic || "./assets/signin.gif"}
-                alt="login icons"
+        <div className="bg-white p-7 w-full max-w-md mx-auto rounded-2xl shadow-2xl border border-slate-100">
+          <div className="w-24 h-24 mx-auto relative overflow-hidden rounded-full shadow-lg border-4 border-orange-100 mb-2 group">
+            <img
+              src={data.profilePic || "./assets/signin.gif"}
+              alt="login icons"
+              className="object-cover w-full h-full"
+            />
+            <label className="absolute bottom-0 left-0 w-full bg-black/60 text-xs text-white text-center py-2 cursor-pointer opacity-80 group-hover:opacity-100 transition-opacity">
+              Upload Photo
+              <input
+                type="file"
+                className="hidden"
+                onChange={handleUploadPic}
               />
-            </div>
-            <form>
-              <label>
-                <div className="text-xs bg-opacity-80 bg-slate-200 pb-4 pt-2 cursor-pointer text-center absolute bottom-0 w-full">
-                  Upload Photo
-                </div>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={handleUploadPic}
-                />
-              </label>
-            </form>
+            </label>
           </div>
 
-          <form className="pt-6 flex flex-col gap-2" onSubmit={handleSubmit}>
-            <div className="grid">
-              <label>Name : </label>
-              <div className="bg-slate-100 p-2">
-                <input
-                  type="text"
-                  placeholder="enter your name"
-                  name="name"
-                  value={data.name}
-                  onChange={handleOnChange}
-                  required
-                  className="w-full h-full outline-none bg-transparent"
-                />
+          <form className="pt-6 flex flex-col gap-4" onSubmit={handleSubmit} autoComplete="off">
+            {/* Name */}
+            <div className="relative">
+              <input
+                type="text"
+                name="name"
+                value={data.name}
+                onChange={handleOnChange}
+                required
+                className="peer w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none text-base transition placeholder-transparent"
+                placeholder=" "
+                autoComplete="off"
+              />
+              <label className={`absolute left-4 top-0.5 text-slate-500 text-sm transition-all pointer-events-none
+                ${data.name ? 'top-0.5 text-xs' : 'top-3.5 text-base'}
+                peer-focus:top-0.5 peer-focus:text-xs
+              `}>Name</label>
+            </div>
+            {/* Email */}
+            <div className="relative">
+              <input
+                type="email"
+                name="email"
+                value={data.email}
+                onChange={handleOnChange}
+                required
+                className="peer w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none text-base transition placeholder-transparent"
+                placeholder=" "
+                autoComplete="off"
+              />
+              <label className={`absolute left-4 text-slate-500 text-sm transition-all pointer-events-none
+                ${data.email ? 'top-0.5 text-xs' : 'top-3.5 text-base'}
+                peer-focus:top-0.5 peer-focus:text-xs
+              `}>Email</label>
+            </div>
+            {/* Password */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={data.password}
+                onChange={handleOnChange}
+                required
+                className="peer w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none text-base transition placeholder-transparent pr-12"
+                placeholder=" "
+                autoComplete="new-password"
+              />
+              <label className={`absolute left-4 top-0.5 text-slate-500 text-sm transition-all pointer-events-none
+                ${data.password ? 'top-0.5 text-xs' : 'top-3.5 text-base'}
+                peer-focus:top-0.5 peer-focus:text-xs
+              `}>Password</label>
+              <div
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-slate-400 hover:text-orange-600"
+                onClick={() => setShowPassword((preve) => !preve)}
+                tabIndex={0}
+                role="button"
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </div>
             </div>
-            <div className="grid">
-              <label>Email : </label>
-              <div className="bg-slate-100 p-2">
-                <input
-                  type="email"
-                  placeholder="enter email"
-                  name="email"
-                  value={data.email}
-                  onChange={handleOnChange}
-                  required
-                  className="w-full h-full outline-none bg-transparent"
-                />
+            {/* Confirm Password */}
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={data.confirmPassword}
+                onChange={handleOnChange}
+                required
+                className="peer w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none text-base transition placeholder-transparent pr-12"
+                placeholder=" "
+                autoComplete="new-password"
+              />
+              <label className={`absolute left-4 top-0.5 text-slate-500 text-sm transition-all bg-white pointer-events-none
+                ${data.confirmPassword ? 'top-0.5 text-xs' : 'top-3.5 text-base'}
+                peer-focus:top-0.5 peer-focus:text-xs
+              `}>Confirm Password</label>
+              <div
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-xl text-slate-400 hover:text-orange-600"
+                onClick={() => setShowConfirmPassword((preve) => !preve)}
+                tabIndex={0}
+                role="button"
+                aria-label="Toggle confirm password visibility"
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </div>
             </div>
-
-            <div>
-              <label>Password : </label>
-              <div className="bg-slate-100 p-2 flex">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="enter password"
-                  value={data.password}
-                  name="password"
-                  onChange={handleOnChange}
-                  required
-                  className="w-full h-full outline-none bg-transparent"
-                />
-                <div
-                  className="cursor-pointer text-xl"
-                  onClick={() => setShowPassword((preve) => !preve)}
-                >
-                  <span>{showPassword ? <FaEyeSlash /> : <FaEye />}</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label>Confirm Password : </label>
-              <div className="bg-slate-100 p-2 flex">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="enter confirm password"
-                  value={data.confirmPassword}
-                  name="confirmPassword"
-                  onChange={handleOnChange}
-                  required
-                  className="w-full h-full outline-none bg-transparent"
-                />
-
-                <div
-                  className="cursor-pointer text-xl"
-                  onClick={() => setShowConfirmPassword((preve) => !preve)}
-                >
-                  <span>
-                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 w-full max-w-[150px] rounded-full hover:scale-110 transition-all mx-auto block mt-6">
+            <button className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 w-full rounded-full font-semibold text-lg shadow hover:scale-[1.03] transition-all mt-2 tracking-wide">
               Sign Up
             </button>
           </form>
-
-          <p className="my-5">
-            Already have account ?{" "}
+          <p className="my-5 text-center text-slate-500">
+            Already have an account?{' '}
             <Link
               to={"/login"}
-              className=" text-red-600 hover:text-red-700 hover:underline"
+              className="text-orange-600 hover:text-orange-700 hover:underline font-semibold"
             >
               Login
             </Link>

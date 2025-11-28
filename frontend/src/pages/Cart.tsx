@@ -134,7 +134,7 @@ const Cart = () => {
     if (responseData?.id && stripePromise) {
       stripePromise.redirectToCheckout({ sessionId: responseData.id });
     }
-    console.log("payment response", responseData);
+    // console.log("payment response", responseData);
   };
 
   const totalQty = data.reduce(
@@ -148,113 +148,102 @@ const Cart = () => {
     0
   );
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto py-8 px-2 md:px-8">
       <div className="text-center text-lg my-3">
         {data.length === 0 && !loading && (
-          <p className="bg-white py-5">No Data</p>
+          <p className="bg-white py-8 rounded-xl shadow text-slate-400 text-xl">No products in your cart.</p>
         )}
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-10 lg:justify-between p-4">
-        {/***view product */}
-        <div className="w-full max-w-3xl">
+      <div className="flex flex-col lg:flex-row gap-10 lg:justify-between">
+        {/* Cart Products */}
+        <div className="w-full">
           {loading
-            ? loadingCart?.map((el, index) => {
-                return (
-                  <div
-                    key={el + "Add To Cart Loading" + index}
-                    className="w-full bg-slate-200 h-32 my-2 border border-slate-300 animate-pulse rounded"
-                  ></div>
-                );
-              })
-            : data.map((product) => {
-                return (
-                  <div
-                    key={product?._id + "Add To Cart Loading"}
-                    className="w-full bg-white h-32 my-2 border border-slate-300  rounded flex gap-4 items-center"
-                  >
-                    <div className="w-32 h-32 bg-slate-200">
-                      <img
-                        src={product?.productId?.productImage?.[0]}
-                        className="w-full h-full object-scale-down mix-blend-multiply"
-                      />
-                    </div>
-                    <div className="px-4 py-2 relative w-full">
-                      {/**delete product */}
-                      <div
-                        className="absolute right-0 text-red-600 rounded-full p-2 hover:bg-orange-600 hover:text-white cursor-pointer"
-                        onClick={() => deleteCartProduct(product._id)}
-                      >
-                        <MdDelete />
-                      </div>
+            ? loadingCart?.map((el, index) => (
+                <div
+                  key={el + "Add To Cart Loading" + index}
+                  className="w-full bg-slate-200 h-36 my-3 first:mt-0 border border-slate-300 animate-pulse rounded-2xl"
+                ></div>
+              ))
+            : data.map((product) => (
+                <div
+                  key={product?._id + "Add To Cart Loading"}
+                  className="w-full bg-white h-36 my-3 first:mt-0 border border-slate-200 rounded-2xl flex gap-6 items-center shadow hover:shadow-lg transition p-2"
+                >
+                  <div className="w-32 h-32 bg-slate-100 rounded-xl flex items-center justify-center overflow-hidden">
+                    <img
+                      src={product?.productId?.productImage?.[0]}
+                      className="w-full h-full object-contain mix-blend-multiply"
+                      alt={product?.productId?.productName}
+                    />
+                  </div>
+                  <div className="py-2 relative w-full pr-10">
+                    {/* Delete product */}
+                    <button
+                      className="absolute right-0 top-0 text-red-600 rounded-full p-2 hover:bg-orange-600 hover:text-white cursor-pointer transition"
+                      onClick={() => deleteCartProduct(product._id)}
+                      title="Remove from cart"
+                    >
+                      <MdDelete size={22} />
+                    </button>
 
-                      <h2 className="text-lg lg:text-xl text-ellipsis line-clamp-1">
-                        {product?.productId?.productName}
-                      </h2>
-                      <p className="capitalize text-slate-500">
-                        {product?.productId?.category}
+                    <h2 className="text-lg lg:text-xl font-semibold text-ellipsis line-clamp-1">
+                      {product?.productId?.productName}
+                    </h2>
+                    <p className="capitalize text-slate-500 text-sm mb-1">
+                      {product?.productId?.category}
+                    </p>
+                    <div className="flex gap-2 items-center justify-between">
+                      <p className="text-orange-600 font-bold text-lg">
+                        {displayUSDCurrency(product?.productId?.sellingPrice || 0)}
                       </p>
-                      <div className="flex gap-2 items-center justify-between">
-                        <p className="text-red-600 font-medium text-lg">
-                          {displayUSDCurrency(
-                            product?.productId?.sellingPrice || 0
-                          )}
-                        </p>
-                        <p className="text-slate-600 font-semibold text-lg line-through">
-                          {displayUSDCurrency(
-                            (product?.productId?.price || 0) *
-                              (product?.quantity || 0)
-                          )}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <button
-                          className="border border-red-600 text-red-600 hover:bg-orange-600 hover:text-white w-6 h-6 flex justify-center items-center rounded "
-                          onClick={() =>
-                            decraseQty(product._id, product.quantity)
-                          }
-                        >
-                          -
-                        </button>
-                        <span>{product.quantity}</span>
-                        <button
-                          className="border border-red-600 text-red-600 hover:bg-orange-600 hover:text-white w-6 h-6 flex justify-center items-center rounded "
-                          onClick={() =>
-                            increaseQty(product._id, product.quantity)
-                          }
-                        >
-                          +
-                        </button>
-                      </div>
+                      <p className="text-slate-400 font-semibold text-base line-through">
+                        {displayUSDCurrency((product?.productId?.price || 0) * (product?.quantity || 0))}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 mt-2">
+                      <button
+                        className="border border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white w-8 h-8 flex justify-center items-center rounded-full text-lg font-bold transition"
+                        onClick={() => decraseQty(product._id, product.quantity)}
+                        aria-label="Decrease quantity"
+                      >
+                        -
+                      </button>
+                      <span className="font-semibold text-lg px-2">{product.quantity}</span>
+                      <button
+                        className="border border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white w-8 h-8 flex justify-center items-center rounded-full text-lg font-bold transition"
+                        onClick={() => increaseQty(product._id, product.quantity)}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
         </div>
 
-        {/***summary  */}
+        {/* Summary */}
         {data[0] && (
           <div className="mt-5 lg:mt-0 w-full max-w-sm">
             {loading ? (
-              <div className="h-36 bg-slate-200 border border-slate-300 animate-pulse"></div>
+              <div className="h-44 bg-slate-200 border border-slate-300 animate-pulse rounded-2xl"></div>
             ) : (
-              <div className="h-36 bg-white">
-                <h2 className="text-white bg-orange-600 px-4 py-1">Summary</h2>
-                <div className="flex items-center justify-between px-4 gap-2 font-medium text-lg text-slate-600">
+              <div className="bg-white rounded-2xl shadow flex flex-col justify-between pb-6">
+                <h2 className="text-white bg-orange-600 px-6 py-3 rounded-t-2xl text-xl font-bold tracking-wide">Summary</h2>
+                <div className="flex items-center justify-between px-6 gap-2 font-medium text-lg text-slate-600 mt-4">
                   <p>Quantity</p>
                   <p>{totalQty}</p>
                 </div>
-
-                <div className="flex items-center justify-between px-4 gap-2 font-medium text-lg text-slate-600">
+                <div className="flex items-center justify-between px-6 gap-2 font-medium text-lg text-slate-600 mb-4">
                   <p>Total Price</p>
-                  <p>{displayUSDCurrency(totalPrice)}</p>
+                  <p className="text-orange-600 font-bold">{displayUSDCurrency(totalPrice)}</p>
                 </div>
-
                 <button
-                  className="bg-blue-600 p-2 text-white w-full mt-2"
+                  className="bg-orange-600 p-3 text-white w-11/12 mx-auto mt-4 rounded-full text-lg font-semibold shadow hover:bg-orange-700 transition"
                   onClick={handlePayment}
                 >
-                  Payment
+                  Checkout & Pay
                 </button>
               </div>
             )}
