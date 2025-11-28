@@ -17,13 +17,16 @@ function App() {
   const [cartProductCount, setCartProductCount] = useState(0);
   const { data: cartCountData, refetch: refetchCartCount } = useAddToCartProductCount();
 
+
   // React Query: fetch user details
-  const { data: userData } = useCurrentUser();
-  const fetchUserDetails = useCallback(() => {
-    if (userData?.success) {
-      dispatch(setUserDetails(userData.data));
+  const { data: userData, refetch: refetchUser } = useCurrentUser();
+  // fetchUserDetails luôn gọi refetchUser để lấy dữ liệu mới nhất
+  const fetchUserDetails = useCallback(async () => {
+    const { data } = await refetchUser();
+    if (data?.success) {
+      dispatch(setUserDetails(data.data));
     }
-  }, [dispatch, userData]);
+  }, [dispatch, refetchUser]);
 
   const fetchUserAddToCart = useCallback(async () => {
     await refetchCartCount();
