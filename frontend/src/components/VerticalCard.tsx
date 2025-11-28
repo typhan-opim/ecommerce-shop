@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import Context from "../context";
-import addToCart from "../helpers/addToCart";
-import displayUSDCurrency from "../helpers/displayCurrency";
-import scrollTop from "../helpers/scrollTop";
+import Context from "@/context";
+import addToCart from "@/helpers/addToCart";
+import displayUSDCurrency from "@/helpers/displayCurrency";
+import scrollTop from "@/helpers/scrollTop";
 
 type Product = {
   _id: string;

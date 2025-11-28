@@ -1,32 +1,15 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import SummaryApi from "@/common";
+import { useCategoryProduct } from "@/hooks/useCategoryProduct";
 
 const CategoryList = () => {
   type CategoryProduct = {
     category: string;
     productImage: string[];
   };
-  const [categoryProduct, setCategoryProduct] = useState<CategoryProduct[]>([]);
-  const [loading, setLoading] = useState(false);
-
+  const { data, isLoading } = useCategoryProduct();
+  const categoryProduct = data?.data || [];
+  const loading = isLoading;
   const categoryLoading = new Array(13).fill(null);
-
-  const fetchCategoryProduct = async () => {
-    setLoading(true);
-    const response = await fetch(SummaryApi.categoryProduct.url);
-    const dataResponse = await response.json();
-    setCategoryProduct(dataResponse.data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    // Avoid calling setState directly in effect body, use async function
-    const fetchData = async () => {
-      await fetchCategoryProduct();
-    };
-    fetchData();
-  }, []);
 
   return (
     <div className="container mx-auto p-4">
@@ -38,7 +21,7 @@ const CategoryList = () => {
                 key={"categoryLoading" + index}
               ></div>
             ))
-          : categoryProduct.map((product) => (
+          : categoryProduct.map((product: CategoryProduct) => (
               <Link
                 to={"/product-category?category=" + product.category}
                 className="cursor-pointer"

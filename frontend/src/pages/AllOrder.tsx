@@ -1,66 +1,45 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
-import SummaryApi from "../common";
-import displayUSDCurrency from "../helpers/displayCurrency";
-
-type Product = {
-  productId: string;
-  image: string[];
-  name: string;
-  price: number;
-  quantity: number;
-};
-
-type Shipping = {
-  shipping_rate: string;
-  shipping_amount: number;
-};
-
-type PaymentDetails = {
-  payment_method_type: string[];
-  payment_status: string;
-};
-
-type Order = {
-  userId: string;
-  createdAt: string;
-  productDetails: Product[];
-  paymentDetails: PaymentDetails;
-  shipping_options: Shipping[];
-  totalAmount: number;
-};
+import { useAllOrder } from "@/hooks/useAllOrder";
+import displayUSDCurrency from "@/helpers/displayCurrency";
 
 const AllOrder = () => {
-  const [data, setData] = useState<Order[]>([]);
-
-  const fetchOrderDetails = async (): Promise<void> => {
-    const response = await fetch(SummaryApi.allOrder.url, {
-      method: SummaryApi.allOrder.method,
-      credentials: "include",
-    });
-
-    type ApiResponse = { data?: Order[] };
-    const responseData: ApiResponse = await response.json();
-
-    setData(Array.isArray(responseData.data) ? responseData.data : []);
-    // console.log("order list", responseData);
+  const { data: queryData, isLoading } = useAllOrder();
+  type Product = {
+    productId: string;
+    image: string[];
+    name: string;
+    price: number;
+    quantity: number;
   };
-
-  useEffect(() => {
-    (async () => {
-      await fetchOrderDetails();
-    })();
-  }, []);
-
+  type Shipping = {
+    shipping_rate: string;
+    shipping_amount: number;
+  };
+  type PaymentDetails = {
+    payment_method_type: string[];
+    payment_status: string;
+  };
+  type Order = {
+    userId: string;
+    createdAt: string;
+    productDetails: Product[];
+    paymentDetails: PaymentDetails;
+    shipping_options: Shipping[];
+    totalAmount: number;
+  };
+  const data = (queryData?.data || []) as Order[];
   return (
     <div className="container mx-auto py-8 px-2 md:px-8">
-      {!data[0] && (
+      {!data[0] && !isLoading && (
         <div className="text-center text-slate-400 py-12 text-lg">
           No Order available
         </div>
       )}
+      {isLoading && (
+        <div className="text-center text-slate-400 py-12 text-lg">Loading...</div>
+      )}
       <div className="grid gap-3 md:gap-4">
-        {data.map((item, index) => (
+        {data.map((item: Order, index: number) => (
           <div
             key={item.userId + index}
             className="bg-white rounded-2xl shadow-lg p-6 border border-slate-100 hover:shadow-2xl transition-shadow duration-200"
@@ -92,7 +71,7 @@ const AllOrder = () => {
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Product List */}
               <div className="flex-1 grid gap-3">
-                {item.productDetails.map((product, idx) => (
+                {item.productDetails.map((product: Product, idx: number) => (
                   <div
                     key={product.productId + idx}
                     className="flex gap-4 bg-slate-50 rounded-xl p-3 hover:bg-blue-50 transition"
@@ -150,7 +129,7 @@ const AllOrder = () => {
                     Shipping
                   </div>
                   <div className="ml-1 text-sm">
-                    {item.shipping_options.map((shipping) => (
+                    {item.shipping_options.map((shipping: Shipping) => (
                       <div key={shipping.shipping_rate}>
                         Shipping Amount:{" "}
                         <span className="font-medium">

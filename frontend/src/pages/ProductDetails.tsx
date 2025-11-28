@@ -1,11 +1,11 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { FaStar, FaStarHalf } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import SummaryApi from "../common";
-import CategroyWiseProductDisplay from "../components/CategoryWiseProductDisplay";
-import Context from "../context";
-import addToCart from "../helpers/addToCart";
-import displayUSDCurrency from "../helpers/displayCurrency";
+import SummaryApi from "@/common";
+import CategroyWiseProductDisplay from "@/components/CategoryWiseProductDisplay";
+import Context from "@/context";
+import addToCart from "@/helpers/addToCart";
+import displayUSDCurrency from "@/helpers/displayCurrency";
 
 type Product = {
   _id: string;

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import ROLE from "../common/role";
+import ROLE from "@/common/role";
 
 import type { RootState } from "@/store/store";
 

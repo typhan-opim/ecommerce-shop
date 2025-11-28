@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MdModeEditOutline } from "react-icons/md";
-import displayUSDCurrency from "../helpers/displayCurrency";
+import displayUSDCurrency from "@/helpers/displayCurrency";
 import UploadProduct from "./UploadProduct";
 
 type Product = {

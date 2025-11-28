@@ -2,8 +2,8 @@ import { useContext, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SummaryApi from "../common";
-import Context from "../context";
+import SummaryApi from "@/common";
+import Context from "@/context";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

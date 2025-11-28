@@ -2,8 +2,8 @@ import { useState } from "react";
 import Select from "react-select";
 import { IoMdClose } from "react-icons/io";
 import { toast } from "react-toastify";
-import SummaryApi from "../common";
-import ROLE from "../common/role";
+import SummaryApi from "@/common";
+import ROLE from "@/common/role";
 
 interface ChangeUserRoleProps {
   name: string;

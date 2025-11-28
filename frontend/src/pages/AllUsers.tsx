@@ -1,9 +1,8 @@
+import ChangeUserRole from "@/components/ChangeUserRole";
+import { useAllUsers } from "@/hooks/useAllUsers";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MdModeEdit } from "react-icons/md";
-import { toast } from "react-toastify";
-import SummaryApi from "../common";
-import ChangeUserRole from "../components/ChangeUserRole";
 
 type User = {
   _id: string;
@@ -15,6 +14,7 @@ type User = {
 
 const AllUsers = () => {
   const [allUser, setAllUsers] = useState<User[]>([]);
+  const { data, refetch } = useAllUsers();
   const [openUpdateRole, setOpenUpdateRole] = useState(false);
   const [updateUserDetails, setUpdateUserDetails] = useState({
     email: "",
@@ -23,28 +23,11 @@ const AllUsers = () => {
     _id: "",
   });
 
-  const fetchAllUsers = async () => {
-    const fetchData = await fetch(SummaryApi.allUser.url, {
-      method: SummaryApi.allUser.method,
-      credentials: "include",
-    });
-
-    const dataResponse = await fetchData.json();
-
-    if (dataResponse.success) {
-      setAllUsers(dataResponse.data);
-    }
-
-    if (dataResponse.error) {
-      toast.error(dataResponse.message);
-    }
-  };
-
-  useEffect(() => {
-    (async () => {
-      await fetchAllUsers();
-    })();
-  }, []);
+  // Update allUser state when data changes
+  if (data && data.success && allUser !== data.data) {
+    setAllUsers(data.data);
+  }
+  const fetchAllUsers = refetch;
 
   return (
     <div className="bg-white p-4 rounded-2xl shadow-lg max-w-6xl mx-auto my-8 overflow-x-auto">

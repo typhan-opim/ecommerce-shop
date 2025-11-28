@@ -3,9 +3,9 @@ import { CgClose } from "react-icons/cg";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
-import SummaryApi from "../common";
-import productCategory from "../helpers/productCategory";
-import uploadImage from "../helpers/uploadImage";
+import SummaryApi from "@/common";
+import productCategory from "@/helpers/productCategory";
+import uploadImage from "@/helpers/uploadImage";
 import DisplayImage from "./DisplayImage";
 
 type Product = {

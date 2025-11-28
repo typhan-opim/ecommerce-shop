@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Context from "../context";
-import addToCart from "../helpers/addToCart";
-import displayUSDCurrency from "../helpers/displayCurrency";
-import fetchCategoryWiseProduct from "../helpers/fetchCategoryWiseProduct";
-import scrollTop from "../helpers/scrollTop";
+import Context from "@/context";
+import addToCart from "@/helpers/addToCart";
+import displayUSDCurrency from "@/helpers/displayCurrency";
+import fetchCategoryWiseProduct from "@/helpers/fetchCategoryWiseProduct";
+import scrollTop from "@/helpers/scrollTop";
 
 
 type Product = {

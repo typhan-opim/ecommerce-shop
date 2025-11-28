@@ -1,7 +1,6 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
-import SummaryApi from "../common";
-import displayUSDCurrency from "../helpers/displayCurrency";
+import { useGetOrder } from "@/hooks/useGetOrder";
+import displayUSDCurrency from "@/helpers/displayCurrency";
 
 type Product = {
   productId: string;
@@ -31,30 +30,15 @@ type Order = {
 };
 
 const OrderPage = () => {
-  const [data, setData] = useState<Order[]>([]);
-
-  const fetchOrderDetails = async () => {
-    const response = await fetch(SummaryApi.getOrder.url, {
-      method: SummaryApi.getOrder.method,
-      credentials: "include",
-    });
-
-    const responseData = await response.json();
-
-    setData(responseData.data);
-    // console.log("order list", responseData);
-  };
-
-  useEffect(() => {
-    (async () => {
-      await fetchOrderDetails();
-    })();
-  }, []);
-
+  const { data: queryData, isLoading } = useGetOrder();
+  const data = (queryData?.data || []) as Order[];
   return (
     <div className="container mx-auto py-8 px-2 md:px-8">
-      {!data[0] && (
+      {!data[0] && !isLoading && (
         <div className="text-center text-slate-400 py-12 text-lg">No Order available</div>
+      )}
+      {isLoading && (
+        <div className="text-center text-slate-400 py-12 text-lg">Loading...</div>
       )}
       <div className="grid gap-3 md:gap-5">
         {data.map((item, index) => (

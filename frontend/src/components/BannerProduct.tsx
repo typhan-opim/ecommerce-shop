@@ -48,7 +48,7 @@ export default function BannerProduct() {
                 <p className="md:text-base text-orange-600 pb-1">
                   {slide.label}
                 </p>
-                <h1 className="max-w-lg md:text-[40px] md:leading-[48px] text-2xl font-semibold">
+                <h1 className="max-w-lg md:text-[40px] md:leading-12 text-2xl font-semibold">
                   {slide.title}
                 </h1>
                 <div className="flex items-center mt-4 md:mt-6 ">

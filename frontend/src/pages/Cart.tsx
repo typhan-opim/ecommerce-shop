@@ -1,9 +1,10 @@
 import { loadStripe } from "@stripe/stripe-js";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
+import { useAddToCartProductView } from "@/hooks/useAddToCartProductView";
 import { MdDelete } from "react-icons/md";
-import SummaryApi from "../common";
-import Context from "../context";
-import displayUSDCurrency from "../helpers/displayCurrency";
+import SummaryApi from "@/common";
+import Context from "@/context";
+import displayUSDCurrency from "@/helpers/displayCurrency";
 
 type Product = {
   productName: string;
@@ -27,32 +28,13 @@ type ContextType = {
 } | null;
 
 const Cart = () => {
-  const [data, setData] = useState<CartProduct[]>([]);
-  const [loading, setLoading] = useState(false);
   const context = useContext(Context) as ContextType;
+  const { data: queryData, isLoading, refetch } = useAddToCartProductView();
+  const data = (queryData?.success ? queryData.data : []) as CartProduct[];
+  const loading = isLoading;
   const loadingCart = new Array(4).fill(null);
 
-  const fetchData = async () => {
-    const response = await fetch(SummaryApi.addToCartProductView.url, {
-      method: SummaryApi.addToCartProductView.method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-    });
-    const responseData = await response.json();
-    if (responseData.success) {
-      setData(responseData.data);
-    }
-  };
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      await fetchData();
-      setLoading(false);
-    })();
-  }, []);
+  // fetchData is now handled by React Query's refetch
 
   const increaseQty = async (id: string, qty: number) => {
     const response = await fetch(SummaryApi.updateCartProduct.url, {
@@ -66,11 +48,9 @@ const Cart = () => {
         quantity: qty + 1,
       }),
     });
-
     const responseData = await response.json();
-
     if (responseData.success) {
-      fetchData();
+      refetch();
     }
   };
 
@@ -87,11 +67,9 @@ const Cart = () => {
           quantity: qty - 1,
         }),
       });
-
       const responseData = await response.json();
-
       if (responseData.success) {
-        fetchData();
+        refetch();
       }
     }
   };
@@ -107,11 +85,9 @@ const Cart = () => {
         _id: id,
       }),
     });
-
     const responseData = await response.json();
-
     if (responseData.success) {
-      fetchData();
+      refetch();
       context?.fetchUserAddToCart?.();
     }
   };

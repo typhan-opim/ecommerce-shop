@@ -1,8 +1,9 @@
-import SummaryApi from "@/common";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import type { ContextType } from "@/context";
 import Context from "@/context";
+import { useAddToCartProductCount } from "@/hooks/useAddToCartProductCount";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Outlet } from "react-router-dom";
@@ -14,33 +15,31 @@ import { setUserDetails } from "./store/userSlice";
 function App() {
   const dispatch = useDispatch();
   const [cartProductCount, setCartProductCount] = useState(0);
+  const { data: cartCountData, refetch: refetchCartCount } = useAddToCartProductCount();
 
-  const fetchUserDetails = useCallback(async () => {
-    const dataResponse = await fetch(SummaryApi.current_user.url, {
-      method: SummaryApi.current_user.method,
-      credentials: "include",
-    });
-    const dataApi = await dataResponse.json();
-    if (dataApi.success) {
-      dispatch(setUserDetails(dataApi.data));
+  // React Query: fetch user details
+  const { data: userData } = useCurrentUser();
+  const fetchUserDetails = useCallback(() => {
+    if (userData?.success) {
+      dispatch(setUserDetails(userData.data));
     }
-  }, [dispatch]);
+  }, [dispatch, userData]);
 
   const fetchUserAddToCart = useCallback(async () => {
-    const dataResponse = await fetch(SummaryApi.addToCartProductCount.url, {
-      method: SummaryApi.addToCartProductCount.method,
-      credentials: "include",
-    });
-    const dataApi = await dataResponse.json();
-    setCartProductCount(dataApi?.data?.count);
-  }, []);
+    await refetchCartCount();
+  }, [refetchCartCount]);
 
   useEffect(() => {
-    (async () => {
-      await fetchUserDetails();
-      await fetchUserAddToCart();
-    })();
-  }, [fetchUserDetails, fetchUserAddToCart]);
+    if (cartCountData?.data?.count !== undefined) {
+      setCartProductCount(cartCountData.data.count);
+    }
+  }, [cartCountData]);
+
+  useEffect(() => {
+    fetchUserDetails();
+    fetchUserAddToCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData, fetchUserAddToCart]);
   return (
     <>
       <Context.Provider

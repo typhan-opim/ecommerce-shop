@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import { useLocation, useNavigate } from "react-router-dom";
-import SummaryApi from "../common";
-import VerticalCard from "../components/VerticalCard";
-import productCategory from "../helpers/productCategory";
+import SummaryApi from "@/common";
+import VerticalCard from "@/components/VerticalCard";
+import productCategory from "@/helpers/productCategory";
 
 type Product = {
   _id: string;

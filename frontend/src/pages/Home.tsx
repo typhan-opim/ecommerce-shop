@@ -1,7 +1,7 @@
-import BannerProduct from '../components/BannerProduct'
-import CategoryList from '../components/CategoryList'
-import HorizontalCardProduct from '../components/HorizontalCardProduct'
-import VerticalCardProduct from '../components/VerticalCardProduct'
+import BannerProduct from '@/components/BannerProduct'
+import CategoryList from '@/components/CategoryList'
+import HorizontalCardProduct from '@/components/HorizontalCardProduct'
+import VerticalCardProduct from '@/components/VerticalCardProduct'
 
 const Home = () => {
   return (
