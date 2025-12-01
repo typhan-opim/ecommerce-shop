@@ -1,5 +1,5 @@
 import { loadStripe } from "@stripe/stripe-js";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useAddToCartProductView } from "@/hooks/useAddToCartProductView";
 import { MdDelete } from "react-icons/md";
 import SummaryApi from "@/common";
@@ -30,6 +30,11 @@ type ContextType = {
 const Cart = () => {
   const context = useContext(Context) as ContextType;
   const { data: queryData, isLoading, refetch } = useAddToCartProductView();
+    // Refetch cart data when navigating to the cart page
+    useEffect(() => {
+      refetch();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   const data = (queryData?.success ? queryData.data : []) as CartProduct[];
   const loading = isLoading;
   const loadingCart = new Array(4).fill(null);
