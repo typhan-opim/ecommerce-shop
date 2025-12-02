@@ -1,10 +1,13 @@
-import SummaryApi from "@/common"
-import { toast } from 'react-toastify'
+
+import SummaryApi from "@/common";
+import type { ModalConfig } from "@/context/ModalContext";
+
 
 
 const addToCart = async (
     e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | undefined,
-    id: string
+    id: string,
+    showModal?: (modal: Omit<ModalConfig, "id">) => string
 ) => {
     e?.stopPropagation();
     e?.preventDefault();
@@ -23,16 +26,14 @@ const addToCart = async (
     const responseData = await response.json()
 
     if(responseData.success){
-        toast.success(responseData.message)
+        // toast.success(responseData.message)
     }
 
-    if(responseData.error){
-        toast.error(responseData.message)
+    if(responseData.error && showModal){
+        showModal({ type: 'alert', message: responseData.message });
     }
-
 
     return responseData
-
 }
 
 

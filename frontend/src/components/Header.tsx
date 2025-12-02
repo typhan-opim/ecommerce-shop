@@ -36,7 +36,7 @@ const Header = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: (data: any) => {
         if (data.success) {
-          toast.success(data.message);
+          //toast.success(data.message);
           dispatch(setUserDetails(null));
           navigate("/");
         } else if (data.error) {
@@ -106,7 +106,8 @@ const Header = () => {
                       className="whitespace-nowrap flex items-center gap-2 rounded-lg px-2 py-1 text-slate-700 hover:bg-orange-50 hover:text-orange-600 font-medium transition"
                       onClick={() => setMenuDisplay(false)}
                     >
-                      <span className="i-lucide-layout-dashboard text-lg" /> Admin Panel
+                      <span className="i-lucide-layout-dashboard text-lg" />{" "}
+                      Admin Panel
                     </Link>
                   )}
                   <Link
@@ -152,8 +153,25 @@ const Header = () => {
             {user?._id ? (
               <button
                 onClick={handleLogout}
-                className="px-3 py-1 rounded-full text-white bg-orange-600 hover:bg-orange-700"
+                className="inline-flex gap-1 items-center px-3 py-1 rounded-full text-white bg-slate-600 hover:bg-slate-700"
               >
+                <svg
+                  width={18}
+                  height={18}
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g>
+                    <path
+                      d="M7.66667 10.1667L10.1667 7.66667M10.1667 7.66667L7.66667 5.16667M10.1667 7.66667H1M5.16667 3.70716V3.66683C5.16667 2.73341 5.16667 2.26635 5.34832 1.90983C5.50811 1.59623 5.76289 1.34144 6.0765 1.18166C6.43302 1 6.90008 1 7.8335 1H11.6668C12.6003 1 13.0663 1 13.4228 1.18166C13.7364 1.34144 13.9921 1.59623 14.1519 1.90983C14.3333 2.266 14.3333 2.73249 14.3333 3.66409V11.6696C14.3333 12.6012 14.3333 13.0671 14.1519 13.4232C13.9921 13.7368 13.7364 13.9921 13.4228 14.1519C13.0667 14.3333 12.6008 14.3333 11.6692 14.3333H7.83076C6.89916 14.3333 6.43267 14.3333 6.0765 14.1519C5.76289 13.9921 5.50811 13.7366 5.34832 13.423C5.16667 13.0665 5.16667 12.6001 5.16667 11.6667V11.625"
+                      stroke="#ffffff"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                </svg>
                 Logout
               </button>
             ) : (

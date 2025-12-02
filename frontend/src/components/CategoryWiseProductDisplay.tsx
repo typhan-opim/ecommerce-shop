@@ -5,6 +5,7 @@ import addToCart from "@/helpers/addToCart";
 import displayUSDCurrency from "@/helpers/displayCurrency";
 import fetchCategoryWiseProduct from "@/helpers/fetchCategoryWiseProduct";
 import scrollTop from "@/helpers/scrollTop";
+import { useModal } from "@/context/ModalContext";
 
 
 type Product = {
@@ -33,9 +34,10 @@ const CategroyWiseProductDisplay = ({ category, heading }: CategoryWiseProductDi
 
   const context = useContext(Context) as ContextType | null;
   const fetchUserAddToCart = context?.fetchUserAddToCart || (() => {});
+  const { showModal } = useModal();
 
   const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
-    await addToCart(e, id);
+    addToCart(e, id, showModal);
     fetchUserAddToCart();
   };
 

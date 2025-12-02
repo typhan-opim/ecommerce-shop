@@ -11,6 +11,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import { setUserDetails } from "./store/userSlice";
+import { ModalProvider } from "@/context/ModalContext";
+import ModalContainer from "@/components/ModalContainer";
 
 function App() {
   const dispatch = useDispatch();
@@ -44,25 +46,23 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData, fetchUserAddToCart]);
   return (
-    <>
+    <ModalProvider>
+      <ModalContainer />
       <Context.Provider
-        value={
-          {
-            fetchUserDetails,
-            cartProductCount,
-            fetchUserAddToCart,
-          } as ContextType
-        }
+        value={{
+          fetchUserDetails,
+          cartProductCount,
+          fetchUserAddToCart,
+        } as ContextType}
       >
         <ToastContainer position="top-center" />
-
         <Header />
         <main className="min-h-[calc(100vh-120px)] pt-16">
           <Outlet />
         </main>
         <Footer />
       </Context.Provider>
-    </>
+    </ModalProvider>
   );
 }
 

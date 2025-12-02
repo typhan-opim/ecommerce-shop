@@ -6,6 +6,7 @@ import CategroyWiseProductDisplay from "@/components/CategoryWiseProductDisplay"
 import Context from "@/context";
 import addToCart from "@/helpers/addToCart";
 import displayUSDCurrency from "@/helpers/displayCurrency";
+import { useModal } from "@/context/ModalContext";
 
 type Product = {
   _id: string;
@@ -44,6 +45,7 @@ const ProductDetails = () => {
   const [zoomImage, setZoomImage] = useState(false);
   const context = useContext(Context) as ContextType;
   const fetchUserAddToCart = context?.fetchUserAddToCart || (() => {});
+  const { showModal } = useModal();
   const navigate = useNavigate();
 
   const fetchProductDetails = async () => {
@@ -95,7 +97,7 @@ const ProductDetails = () => {
     e: React.MouseEvent<HTMLButtonElement>,
     id: string
   ) => {
-    await addToCart(e, id);
+    await addToCart(e, id, showModal);
     fetchUserAddToCart();
   };
 

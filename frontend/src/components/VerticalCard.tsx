@@ -4,6 +4,7 @@ import Context from "@/context";
 import addToCart from "@/helpers/addToCart";
 import displayUSDCurrency from "@/helpers/displayCurrency";
 import scrollTop from "@/helpers/scrollTop";
+import { useModal } from "@/context/ModalContext";
 
 type Product = {
   _id: string;
@@ -27,12 +28,13 @@ const VerticalCard = ({ loading, data = [] }: VerticalCardProps) => {
   const loadingList = new Array(13).fill(null);
   const context = useContext(Context) as ContextType | null;
   const fetchUserAddToCart = context?.fetchUserAddToCart || (() => {});
+  const { showModal } = useModal();
 
   const handleAddToCart = async (
     e: React.MouseEvent<HTMLButtonElement>,
     id: string
   ) => {
-    await addToCart(e, id);
+    await addToCart(e, id, showModal);
     fetchUserAddToCart();
   };
 
