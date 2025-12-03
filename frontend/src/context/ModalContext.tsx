@@ -7,6 +7,7 @@ export interface ModalConfig {
   id: string;
   type: ModalType;
   message?: string;
+  redirect?: string;
   // Add more config fields as needed
 }
 

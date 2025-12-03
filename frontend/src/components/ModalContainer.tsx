@@ -11,6 +11,7 @@ const ModalContainer: React.FC = () => {
         <CommonModal
           key={modal.id}
           message={modal.message || ""}
+          redirect={modal.redirect}
           onClose={() => closeModal(modal.id)}
         />
       ))}

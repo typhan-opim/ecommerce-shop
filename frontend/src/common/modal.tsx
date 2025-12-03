@@ -1,11 +1,19 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface CommonModalProps {
   message: string;
-  onClose?: () => void;
+  redirect?: string;
+  onClose: () => void;
 }
 
-export const CommonModal: React.FC<CommonModalProps> = ({ message, onClose }) => {
+export const CommonModal: React.FC<CommonModalProps> = ({
+  message,
+  redirect,
+  onClose,
+}) => {
+  const navigate = useNavigate();
+  console.log("Redirect:", redirect);
   useEffect(() => {
     const original = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -13,6 +21,15 @@ export const CommonModal: React.FC<CommonModalProps> = ({ message, onClose }) =>
       document.body.style.overflow = original;
     };
   }, []);
+
+  const handleRedirect = () => {
+    if (redirect) {
+      onClose();
+      navigate(redirect);
+    } else {
+      onClose();
+    }
+  };
 
   return (
     <div
@@ -39,21 +56,42 @@ export const CommonModal: React.FC<CommonModalProps> = ({ message, onClose }) =>
           textAlign: "center",
         }}
       >
-        <div style={{ fontSize: "1.1rem", color: "#d32f2f", marginBottom: 18 }}>{message}</div>
-        <button
-          style={{
-            background: "#d32f2f",
-            color: "white",
-            border: "none",
-            borderRadius: 6,
-            padding: "8px 24px",
-            fontSize: "1rem",
-            cursor: "pointer",
-          }}
-          onClick={onClose}
-        >
-          OK
-        </button>
+        <div style={{ fontSize: "1.1rem", color: "#d32f2f", marginBottom: 18 }}>
+          {message}
+        </div>
+        <div className="flex gap-2 justify-center">
+          <button
+            style={{
+              background: "#d32f2f",
+              color: "white",
+              border: "none",
+              borderRadius: 6,
+              padding: "8px 24px",
+              fontSize: "1rem",
+              cursor: "pointer",
+            }}
+            onClick={handleRedirect}
+          >
+            OK
+          </button>
+          {redirect && (
+            <button
+              style={{
+                marginLeft: 10,
+                background: "#757575",
+                color: "white",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 24px",
+                fontSize: "1rem",
+                cursor: "pointer",
+              }}
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 
 import SummaryApi from "@/common";
 import type { ModalConfig } from "@/context/ModalContext";
+import { toast } from "react-toastify";
 
 
 
@@ -26,11 +27,11 @@ const addToCart = async (
     const responseData = await response.json()
 
     if(responseData.success){
-        // toast.success(responseData.message)
+        toast.success(responseData.message, { autoClose: 500 })
     }
 
     if(responseData.error && showModal){
-        showModal({ type: 'alert', message: responseData.message });
+        showModal({ type: 'alert', message: responseData.message, redirect: responseData.redirect });
     }
 
     return responseData

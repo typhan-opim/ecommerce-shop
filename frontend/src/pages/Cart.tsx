@@ -1,10 +1,11 @@
 import { loadStripe } from "@stripe/stripe-js";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAddToCartProductView } from "@/hooks/useAddToCartProductView";
 import { MdDelete } from "react-icons/md";
 import SummaryApi from "@/common";
 import Context from "@/context";
 import displayUSDCurrency from "@/helpers/displayCurrency";
+import Loading from "@/common/Loading";
 
 type Product = {
   productName: string;
@@ -29,6 +30,7 @@ type ContextType = {
 
 const Cart = () => {
   const context = useContext(Context) as ContextType;
+  const [loadingAction, setLoadingAction] = useState(false);
   const { data: queryData, isLoading, refetch } = useAddToCartProductView();
     // Refetch cart data when navigating to the cart page
     useEffect(() => {
@@ -42,6 +44,7 @@ const Cart = () => {
   // fetchData is now handled by React Query's refetch
 
   const increaseQty = async (id: string, qty: number) => {
+    setLoadingAction(true);
     const response = await fetch(SummaryApi.updateCartProduct.url, {
       method: SummaryApi.updateCartProduct.method,
       credentials: "include",
@@ -57,10 +60,12 @@ const Cart = () => {
     if (responseData.success) {
       refetch();
     }
+    setLoadingAction(false);
   };
 
   const decraseQty = async (id: string, qty: number) => {
     if (qty >= 2) {
+      setLoadingAction(true);
       const response = await fetch(SummaryApi.updateCartProduct.url, {
         method: SummaryApi.updateCartProduct.method,
         credentials: "include",
@@ -76,10 +81,12 @@ const Cart = () => {
       if (responseData.success) {
         refetch();
       }
+      setLoadingAction(false);
     }
   };
 
   const deleteCartProduct = async (id: string) => {
+    setLoadingAction(true);
     const response = await fetch(SummaryApi.deleteCartProduct.url, {
       method: SummaryApi.deleteCartProduct.method,
       credentials: "include",
@@ -95,6 +102,7 @@ const Cart = () => {
       refetch();
       context?.fetchUserAddToCart?.();
     }
+    setLoadingAction(false);
   };
 
   const handlePayment = async () => {
@@ -135,6 +143,8 @@ const Cart = () => {
           <p className="bg-white py-8 rounded-xl shadow text-slate-400 text-xl">No products in your cart.</p>
         )}
       </div>
+
+      {loadingAction && <Loading />}
 
       <div className="flex flex-col lg:flex-row gap-10 lg:justify-between">
         {/* Cart Products */}
