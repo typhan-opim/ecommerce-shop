@@ -3,6 +3,8 @@ import SummaryApi from "@/common";
 import type { ModalConfig } from "@/context/ModalContext";
 import { toast } from "react-toastify";
 
+import { postData } from '@/services/apiService';
+
 
 
 const addToCart = async (
@@ -13,18 +15,11 @@ const addToCart = async (
     e?.stopPropagation();
     e?.preventDefault();
 
-    const response = await fetch(SummaryApi.addToCartProduct.url,{
-        method : SummaryApi.addToCartProduct.method,
-        credentials : 'include',
-        headers : {
-            "content-type" : 'application/json'
-        },
-        body : JSON.stringify(
-            { productId : id }
-        )
-    })
 
-    const responseData = await response.json()
+    const responseData = await postData<any>(
+        SummaryApi.addToCartProduct.url,
+        { productId: id }
+    );
 
     if(responseData.success){
         toast.success(responseData.message, { autoClose: 500 })

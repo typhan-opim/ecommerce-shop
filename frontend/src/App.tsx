@@ -1,50 +1,33 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import type { ContextType } from "@/context";
+import ModalContainer from "@/components/ModalContainer";
 import Context from "@/context";
+import { ModalProvider } from "@/context/ModalContext";
 import { useAddToCartProductCount } from "@/hooks/useAddToCartProductCount";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import { setUserDetails } from "./store/userSlice";
-import { ModalProvider } from "@/context/ModalContext";
-import ModalContainer from "@/components/ModalContainer";
 
 function App() {
-  const dispatch = useDispatch();
-  const [cartProductCount, setCartProductCount] = useState(0);
-  const { data: cartCountData, refetch: refetchCartCount } = useAddToCartProductCount();
-
-
-  // React Query: fetch user details
+  // React Query fetch (tự cache toàn app)
   const { data: userData, refetch: refetchUser } = useCurrentUser();
-  // fetchUserDetails luôn gọi refetchUser để lấy dữ liệu mới nhất
+  const { data: cartData, refetch: refetchCartCount } = useAddToCartProductCount();
+  console.log("Current User Data:", userData);
+
+  // lấy từ React Query luôn, không cần state
+  const cartProductCount = cartData?.data?.count ?? 0;
+
   const fetchUserDetails = useCallback(async () => {
-    const { data } = await refetchUser();
-    if (data?.success) {
-      dispatch(setUserDetails(data.data));
-    }
-  }, [dispatch, refetchUser]);
+    await refetchUser();
+  }, [refetchUser]);
 
   const fetchUserAddToCart = useCallback(async () => {
     await refetchCartCount();
   }, [refetchCartCount]);
 
-  useEffect(() => {
-    if (cartCountData?.data?.count !== undefined) {
-      setCartProductCount(cartCountData.data.count);
-    }
-  }, [cartCountData]);
-
-  useEffect(() => {
-    fetchUserDetails();
-    fetchUserAddToCart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userData, fetchUserAddToCart]);
   return (
     <ModalProvider>
       <ModalContainer />
@@ -53,7 +36,7 @@ function App() {
           fetchUserDetails,
           cartProductCount,
           fetchUserAddToCart,
-        } as ContextType}
+        }}
       >
         <ToastContainer position="top-center" />
         <Header />

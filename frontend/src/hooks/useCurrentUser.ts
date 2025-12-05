@@ -1,19 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import SummaryApi from '@/common';
+import { getData } from '@/services/apiService';
 
 export function useCurrentUser() {
   return useQuery({
     queryKey: ['current_user'],
     queryFn: async () => {
-      const res = await fetch(SummaryApi.current_user.url, {
-        method: SummaryApi.current_user.method.toUpperCase(),
-        credentials: 'include',
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
-      if (!res.ok) throw new Error('Failed to fetch user');
-      return res.json();
+      const response = await getData<any>(SummaryApi.current_user.url);
+      if (response.success) {
+        return response.data;
+      }
+      return null;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

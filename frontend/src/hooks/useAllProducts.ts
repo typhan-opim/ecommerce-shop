@@ -1,19 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import SummaryApi from '@/common';
+import { getData } from '@/services/apiService';
 
 export function useAllProducts() {
   return useQuery({
     queryKey: ['allProduct'],
     queryFn: async () => {
-      const res = await fetch(SummaryApi.allProduct.url, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
-      if (!res.ok) throw new Error('Failed to fetch products');
-      return res.json();
+      return await getData<any>(SummaryApi.allProduct.url);
     },
     staleTime: 5 * 60 * 1000,
   });

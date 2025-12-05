@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import SummaryApi from "../common";
 import VerticalCard from "../components/VerticalCard";
+import { getData } from '@/services/apiService';
+import Loading from "@/common/Loading";
 
 type Product = {
   _id: string;
@@ -22,8 +24,8 @@ const SearchProduct = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
-      const response = await fetch(SummaryApi.searchProduct.url + query.search);
-      const dataResponse = await response.json();
+      const url = SummaryApi.searchProduct.url + query.search;
+      const dataResponse = await getData<any>(url);
       setLoading(false);
       setData(dataResponse.data);
     };
@@ -32,7 +34,7 @@ const SearchProduct = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {loading && <p className="text-lg text-center">Loading ...</p>}
+      {loading && <Loading />}
 
       <p className="text-lg font-semibold my-3">
         Search Results : {data.length}

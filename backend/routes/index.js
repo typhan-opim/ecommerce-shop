@@ -29,37 +29,36 @@ const allOrderController = require('../controller/order/allOrder.controller')
 
 
 
-router.post("/signup",userSignUpController)
-router.post("/signin",userSignInController)
-router.get("/user-details",authToken,userDetailsController)
-router.get("/userLogout",userLogout)
 
-//admin panel 
-router.get("/all-user",authToken,allUsers)
-router.post("/update-user",authToken,updateUser)
 
-//product
-router.post("/upload-product",authToken,UploadProductController)
-router.get("/get-product",getProductController)
-router.post("/update-product",authToken,updateProductController)
-router.get("/get-categoryProduct",getCategoryProduct)
-router.post("/category-product",getCategoryWiseProduct)
-router.post("/product-details",getProductDetails)
-router.get("/search",searchProduct)
-router.post("/filter-product",filterProductController)
+// Public routes (no authToken)
+router.post("/signup", userSignUpController)
+router.post("/signin", userSignInController)
+router.get("/userLogout", userLogout)
+router.get("/get-product", getProductController)
+router.get("/get-categoryProduct", getCategoryProduct)
+router.post("/category-product", getCategoryWiseProduct)
+router.post("/product-details", getProductDetails)
+router.get("/search", searchProduct)
+router.post('/filter-product', filterProductController)
+router.post('/webhook', webhooks) // /api/webhook
 
-//user add to cart
-router.post("/addtocart",authToken,addToCartController)
-router.get("/countAddToCartProduct",authToken,countAddToCartProduct)
-router.get("/view-card-product",authToken,addToCartViewProduct)
-router.post("/update-cart-product",authToken,updateAddToCartProduct)
-router.post("/delete-cart-product",authToken,deleteAddToCartProduct)
-
-//payment and order
-router.post('/checkout',authToken,paymentController)
-router.post('/webhook',webhooks) // /api/webhook
-router.get("/order-list",authToken,orderController)
-router.get("/all-order",authToken,allOrderController)
+// Auth routes (require authToken)
+router.get("/auth/user-details", authToken, userDetailsController)
+router.get("/auth/all-user", authToken, allUsers)
+router.post("/auth/update-user", authToken, updateUser)
+router.post("/auth/upload-product", authToken, UploadProductController)
+router.post("/auth/update-product", authToken, updateProductController)
+// user add to cart
+router.post("/auth/addtocart", authToken, addToCartController)
+router.get("/auth/countAddToCartProduct", authToken, countAddToCartProduct)
+router.get("/auth/view-card-product", authToken, addToCartViewProduct)
+router.post("/auth/update-cart-product", authToken, updateAddToCartProduct)
+router.post("/auth/delete-cart-product", authToken, deleteAddToCartProduct)
+// payment and order
+router.post('/auth/checkout', authToken, paymentController)
+router.get("/auth/order-list", authToken, orderController)
+router.get("/auth/all-order", authToken, allOrderController)
 
 
 

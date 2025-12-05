@@ -1,6 +1,7 @@
-import moment from "moment";
-import { useGetOrder } from "@/hooks/useGetOrder";
+import Loading from "@/common/Loading";
 import displayUSDCurrency from "@/helpers/displayCurrency";
+import { useGetOrder } from "@/hooks/useGetOrder";
+import moment from "moment";
 
 type Product = {
   productId: string;
@@ -38,7 +39,7 @@ const OrderPage = () => {
         <div className="text-center text-slate-400 py-12 text-lg">No Order available</div>
       )}
       {isLoading && (
-        <div className="text-center text-slate-400 py-12 text-lg">Loading...</div>
+        <Loading />
       )}
       <div className="grid gap-3 md:gap-5">
         {data.map((item, index) => (

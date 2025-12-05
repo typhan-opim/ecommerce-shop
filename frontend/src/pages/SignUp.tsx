@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SummaryApi from "@/common";
 import imageTobase64 from "@/helpers/imageTobase64";
+import { postData } from '@/services/apiService';
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,15 +40,10 @@ const SignUp = () => {
     e.preventDefault();
 
     if (data.password === data.confirmPassword) {
-      const dataResponse = await fetch(SummaryApi.signUP.url, {
-        method: SummaryApi.signUP.method,
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const dataApi = await dataResponse.json();
+      const dataApi = await postData<any>(
+        SummaryApi.signUP.url,
+        data
+      );
 
       if (dataApi.success) {
         toast.success(dataApi.message);

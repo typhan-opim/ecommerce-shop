@@ -28,7 +28,8 @@ async function userSignInController(req,res){
             _id : user._id,
             email : user.email,
         }
-        const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: 60 * 60 * 8 });
+        const expiresInSeconds = 60 * 60 * 8; // 8 hours
+        const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: expiresInSeconds });
 
         const tokenOption = {
             httpOnly : true,
@@ -36,9 +37,15 @@ async function userSignInController(req,res){
             sameSite : 'None'
         }
 
+        // Tính thời điểm hết hạn (timestamp, giây)
+        const expiresAt = Math.floor(Date.now() / 1000) + expiresInSeconds;
+
         res.cookie("token",token,tokenOption).status(200).json({
             message : "Login successfully",
-            data : token,
+            data : {
+                token : token,
+                expiresAt : expiresAt
+            },
             success : true,
             error : false
         })

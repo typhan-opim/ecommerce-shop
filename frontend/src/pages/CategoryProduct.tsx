@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SummaryApi from "@/common";
 import VerticalCard from "@/components/VerticalCard";
 import productCategory from "@/helpers/productCategory";
+import { postData } from '@/services/apiService';
 
 type Product = {
   _id: string;
@@ -71,16 +72,10 @@ const CategoryProduct = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(SummaryApi.filterProduct.url, {
-        method: SummaryApi.filterProduct.method,
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          category: filterCategoryList,
-        }),
-      });
-      const dataResponse = await response.json();
+      const dataResponse = await postData<any>(
+        SummaryApi.filterProduct.url,
+        { category: filterCategoryList }
+      );
       let products = dataResponse?.data || [];
       // Filter by price range if not 'all'
       if (selectedPriceRange.value !== "all") {

@@ -1,26 +1,14 @@
 import useClickOutside from "@/helpers/useClickOutside";
 import { useContext, useRef, useState } from "react";
-// import { FaShoppingCart } from "react-icons/fa";
 import ROLE from "@/common/role";
 import Context from "@/context";
-import { useLogoutUser } from "@/hooks/useLogoutUser";
-import type { RootState } from "@/store/store";
-import { setUserDetails } from "@/store/userSlice";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { GrSearch } from "react-icons/gr";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 
 const Header = () => {
-  type User = {
-    _id: string;
-    name: string;
-    role: string;
-    profilePic?: string;
-  } | null;
-  const user = useSelector((state: RootState) => state.user.user) as User;
-  const dispatch = useDispatch();
+  const { data:user} = useCurrentUser();
   const [menuDisplay, setMenuDisplay] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null!);
   useClickOutside(menuRef, () => setMenuDisplay(false));
@@ -31,22 +19,9 @@ const Header = () => {
   const searchQuery = URLSearch.get("q") || "";
   const [search, setSearch] = useState<string>(searchQuery);
 
-  const logoutMutation = useLogoutUser();
   const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: (data: any) => {
-        if (data.success) {
-          //toast.success(data.message);
-          dispatch(setUserDetails(null));
-          navigate("/");
-        } else if (data.error) {
-          toast.error(data.message);
-        }
-      },
-      onError: (error: any) => {
-        toast.error(error.message || "Logout failed");
-      },
-    });
+    localStorage.removeItem("auth-store");
+    window.location.reload();
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

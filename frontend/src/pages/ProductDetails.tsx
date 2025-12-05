@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { FaStar, FaStarHalf } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import SummaryApi from "@/common";
+import { postData } from '@/services/apiService';
 import CategroyWiseProductDisplay from "@/components/CategoryWiseProductDisplay";
 import Context from "@/context";
 import addToCart from "@/helpers/addToCart";
@@ -50,16 +51,10 @@ const ProductDetails = () => {
 
   const fetchProductDetails = async () => {
     setLoading(true);
-    const response = await fetch(SummaryApi.productDetails.url, {
-      method: SummaryApi.productDetails.method,
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        productId: params?.id,
-      }),
-    });
-    const dataReponse = await response.json();
+    const dataReponse = await postData<any>(
+      SummaryApi.productDetails.url,
+      { productId: params?.id }
+    );
     setLoading(false);
     setData(dataReponse?.data);
     setActiveImage(dataReponse?.data?.productImage?.[0] || "");

@@ -7,6 +7,7 @@ import SummaryApi from "@/common";
 import productCategory from "@/helpers/productCategory";
 import uploadImage from "@/helpers/uploadImage";
 import DisplayImage from "./DisplayImage";
+import { postData } from '@/services/apiService';
 
 type Product = {
   productName: string;
@@ -82,18 +83,12 @@ const AdminEditProduct = ({
     /**upload product */
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
-
-    const response = await fetch(SummaryApi.updateProduct.url, {
-      method: SummaryApi.updateProduct.method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const responseData = await response.json();
+    const responseData = await postData<any>(
+      SummaryApi.updateProduct.url,
+      data
+    );
 
     if (responseData.success) {
       toast.success(responseData?.message);

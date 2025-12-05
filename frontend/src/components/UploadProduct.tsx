@@ -7,6 +7,7 @@ import SummaryApi from "@/common";
 import productCategory from "@/helpers/productCategory";
 import uploadImage from "@/helpers/uploadImage";
 import DisplayImage from "./DisplayImage";
+import { postData } from '@/services/apiService';
 
 interface UploadProductProps {
   onClose: () => void;
@@ -92,23 +93,13 @@ const UploadProduct = ({ onClose, fetchData, isEdit = false, productData }: Uplo
     /**upload product */
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
     let url = SummaryApi.uploadProduct.url;
-    let method = SummaryApi.uploadProduct.method;
     if (isEdit) {
       url = SummaryApi.updateProduct.url;
-      method = SummaryApi.updateProduct.method;
     }
-    const response = await fetch(url, {
-      method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const responseData = await response.json();
+    const responseData = await postData<any>(url, data);
 
     if (responseData.success) {
       toast.success(responseData?.message);

@@ -1,21 +1,14 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { FaRegCircleUser } from "react-icons/fa6";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import ROLE from "@/common/role";
 
-import type { RootState } from "@/store/store";
 
-type User = {
-  name: string;
-  role: string;
-  profilePic?: string;
-};
+// User type is inferred from API
 
 const AdminPanel = () => {
-  const user = useSelector(
-    (state: RootState) => state.user.user
-  ) as User | null;
+  const { data: user } = useCurrentUser();
   const navigate = useNavigate();
 
   useEffect(() => {

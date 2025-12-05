@@ -1,9 +1,18 @@
+import SummaryApi from "@/common";
+import Context from "@/context";
+import { postData } from "@/services/apiService";
 import { useContext, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SummaryApi from "@/common";
-import Context from "@/context";
+
+type ResponseSignIn = {
+  success: boolean;
+  error: boolean;
+  data: string;
+  expiresAt: number;
+  message: string;
+};
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,18 +43,10 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const dataResponse = await fetch(SummaryApi.signIn.url, {
-      method: SummaryApi.signIn.method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const dataApi = await dataResponse.json();
+    const dataApi = await postData<ResponseSignIn>(SummaryApi.signIN.url, data);
 
     if (dataApi.success) {
+      localStorage.setItem("auth-store", JSON.stringify(dataApi.data));
       //toast.success(dataApi.message);
       navigate("/");
       fetchUserDetails();

@@ -1,6 +1,7 @@
 import moment from "moment";
 import { useAllOrder } from "@/hooks/useAllOrder";
 import displayUSDCurrency from "@/helpers/displayCurrency";
+import Loading from "@/common/Loading";
 
 const AllOrder = () => {
   const { data: queryData, isLoading } = useAllOrder();
@@ -36,7 +37,7 @@ const AllOrder = () => {
         </div>
       )}
       {isLoading && (
-        <div className="text-center text-slate-400 py-12 text-lg">Loading...</div>
+        <Loading />
       )}
       <div className="grid gap-3 md:gap-4">
         {data.map((item: Order, index: number) => (

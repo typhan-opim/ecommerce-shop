@@ -47,7 +47,7 @@ const paymentController = async(request,response)=>{
 
         const session = await stripe.checkout.sessions.create(params)
 
-        response.status(303).json(session)
+        response.status(200).json(session)
 
     } catch (error) {
         response.json({

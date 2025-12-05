@@ -5,6 +5,7 @@ import { MdDelete } from "react-icons/md";
 import SummaryApi from "@/common";
 import Context from "@/context";
 import displayUSDCurrency from "@/helpers/displayCurrency";
+import { postData } from '@/services/apiService';
 import Loading from "@/common/Loading";
 
 type Product = {
@@ -45,18 +46,10 @@ const Cart = () => {
 
   const increaseQty = async (id: string, qty: number) => {
     setLoadingAction(true);
-    const response = await fetch(SummaryApi.updateCartProduct.url, {
-      method: SummaryApi.updateCartProduct.method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        _id: id,
-        quantity: qty + 1,
-      }),
-    });
-    const responseData = await response.json();
+    const responseData = await postData<any>(
+      SummaryApi.updateCartProduct.url,
+      { _id: id, quantity: qty + 1 }
+    );
     if (responseData.success) {
       refetch();
     }
@@ -66,18 +59,10 @@ const Cart = () => {
   const decraseQty = async (id: string, qty: number) => {
     if (qty >= 2) {
       setLoadingAction(true);
-      const response = await fetch(SummaryApi.updateCartProduct.url, {
-        method: SummaryApi.updateCartProduct.method,
-        credentials: "include",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          _id: id,
-          quantity: qty - 1,
-        }),
-      });
-      const responseData = await response.json();
+      const responseData = await postData<any>(
+        SummaryApi.updateCartProduct.url,
+        { _id: id, quantity: qty - 1 }
+      );
       if (responseData.success) {
         refetch();
       }
@@ -87,17 +72,10 @@ const Cart = () => {
 
   const deleteCartProduct = async (id: string) => {
     setLoadingAction(true);
-    const response = await fetch(SummaryApi.deleteCartProduct.url, {
-      method: SummaryApi.deleteCartProduct.method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        _id: id,
-      }),
-    });
-    const responseData = await response.json();
+    const responseData = await postData<any>(
+      SummaryApi.deleteCartProduct.url,
+      { _id: id }
+    );
     if (responseData.success) {
       refetch();
       context?.fetchUserAddToCart?.();
@@ -109,17 +87,10 @@ const Cart = () => {
     const stripePromise = await loadStripe(
       import.meta.env.VITE_STRIPE_PUBLIC_KEY
     );
-    const response = await fetch(SummaryApi.payment.url, {
-      method: SummaryApi.payment.method,
-      credentials: "include",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        cartItems: data,
-      }),
-    });
-    const responseData = await response.json();
+    const responseData = await postData<any>(
+      SummaryApi.payment.url,
+      { cartItems: data }
+    );
     if (responseData?.id && stripePromise) {
       stripePromise.redirectToCheckout({ sessionId: responseData.id });
     }

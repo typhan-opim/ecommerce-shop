@@ -1,19 +1,12 @@
 import SummaryApi from "@/common";
+import { postData } from '@/services/apiService';
 
 const fetchCategoryWiseProduct = async (category: string) => {
-    const response = await fetch(SummaryApi.categoryWiseProduct.url,{
-        method : SummaryApi.categoryWiseProduct.method,
-        headers : {
-            "content-type" : "application/json"
-        },
-        body : JSON.stringify({
-            category : category
-        })
-    })
-
-    const dataResponse = await response.json()
-
-    return dataResponse
+    const dataResponse = await postData<any>(
+        SummaryApi.categoryWiseProduct.url,
+        { category }
+    );
+    return dataResponse;
 }
 
 export default fetchCategoryWiseProduct
